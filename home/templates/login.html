@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}
+<title>Split It | LogIn </title>
+{% endblock %}
+{% block style %}
+<style>
+.main{
+    margin-left: 50%;
+    transform: translate(-50%);
+    width: 300px;
+}
+#submit-button{
+    float: right;
+}    
+</style>
+{% endblock %}
+{% block content %}
+<div class="main mt-4">
+    <center>
+        <b>LogIn Panel- Split It</b><br>
+    </center>
+    <br>
+    <div class="input-group mb-3 w-100">
+        <span class="input-group-text" id="basic-addon1">👤</span>
+        <input type="text" id = "username-input" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+      </div>
+    <div class="input-group mb-3 w-100">
+        <span class="input-group-text" id="basic-addon1">🔒</span>
+        <input type="password" id = "password-input" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1">
+    </div>
+      <button type="button" class="btn btn-outline-dark" id = "submit-button">Log me in now!</button>    
+    </div>
+<script>
+    $("#submit-button").click(function() {
+        $.ajax({
+            url: "{% url 'authenticate-user' %}",
+            method: "POST",
+            data: {
+                username: document.getElementById("username-input").value,
+                password: document.getElementById("password-input").value
+            },
+            success: function(data, status, xhr){
+                if(data.authenticated === "yes"){
+                    if(window.location.href == "/"){
+                        window.location.reload();
+                    } else {
+                        window.location.replace("/");
+                    }
+                } else {
+                    alert("You are not authenticated.");
+                }
+            },
+            error: function(xhr, status, err){
+                alert("Some error occured");
+            }
+
+        })
+    })
+</script>      
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% block title %}
+<title>Split It | Groups</title>
+{% endblock %}
+{% block style %}
+{% endblock %}
+{% block navbar %}
+<li class="nav-item">
+  <a class="nav-link" href="/">Dashboard</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="{% url 'group-view' %}">Groups</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'profile-page' %}">Profile</a>
+</li>
+{% endblock %}
+{% block content %}
+<center>
+<h4 style="margin-top: 10px; margin-left: 25px;">Groups You Are Into</h4>
+<a style="margin-left: 25px; cursor: pointer; color: tomato;" id = "show-group-modal-button" data-bs-toggle="modal" data-bs-target="#staticBackdrop-1"><u>Add New Group</u></a>
+</center>
+{% if groups_num == 0 %}
+<center><h6 style ="margin-left: 28px; margin-top: 5px;">You haven't joined any group so far. Ask group owner to make you a member or create your own group.</h6></center>
+{% else %}
+<div class="row" style="width: 99%; margin-top: 20px; justify-content: center;">
+{% for group_get in groups_get %}
+<div class="card text-white bg-dark text-center" style="width: 20rem;margin-left: 20px; margin-bottom: 40px;">
+  <div class="card-header">Group #{{ group_get.group.id }}</div>
+  {% if group_get.group.image %}
+  <img src="{{ group_get.group.image.url }}" class="card-img-top" style="border-radius: 5px; margin-top: 10px; height: 220px;">
+ {% else %} 
+ <img src="https://media.istockphoto.com/photos/group-multiracial-people-having-fun-outdoor-happy-mixed-race-friends-picture-id1211345565?k=20&m=1211345565&s=612x612&w=0&h=Gg65DvzedP7YDo6XFbB-8-f7U7m5zHm1OPO3uIiVFgo=" class="card-img-top" style="border-radius: 5px; margin-top: 10px; height: 220px;">
+ {% endif %} 
+    <div class="card-body">
+      <h5 class="card-title">{{ group_get.group.title }}</h5>
+      <small>Details</small>
+      <br>
+      <p class="card-text">{% if group_get.group.details == None %} No details {% else %} {{ group_get.group.details }} {% endif %}</p>
+    </div>
+    <div class="card-footer" style="margin-bottom: 5px;">
+    <a href="/group/{{ group_get.group.id }}">
+      <button type="button" class="btn btn-light btn-sm" id = "details-button-{{ group_get.group.id }}">View Members & Expenses</button>
+    </a>
+    </div>
+  </div>  
+  {% endfor %}    
+{% endif %}  
+</div>
+<!-- modal starts here -->
+<div class="modal fade" id="staticBackdrop-1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Creating Group</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <h6>Enter Details</h6>
+        <div class="input-group mb-3">
+          <span class="input-group-text">Title</span>
+          <input type="text" class="form-control" id="groupname" placeholder="Group Name">
+      </div>
+      <div class="input-group mb-3">
+          <span class="input-group-text">Description</span>
+          <textarea class="form-control" id="details" placeholder="Details about group..."></textarea>
+      </div>
+      <h6>Add Group Image</h6>
+      <img id = "preview-image" style="width: 200px; height: 200px;">
+      <input type="file"  accept="image/gif, image/jpeg, image/png" name="image" id="file" onchange="loadFile(event)">
+      <h6 style="margin-top: 10px;">Add Members to the Group</h6>
+      <div class="input-group mb-3">
+        <span class="input-group-text">@</span>
+        <input type="text" class="form-control" id="add-user-input" placeholder="User's username" aria-label="Recipient's username" aria-describedby="button-addon2">
+        <button class="btn btn-outline-secondary" type="button" id="add-user-button">+ Add User</button>
+      </div>
+      <h6 id = "when-added"> No Members Added. </h6>
+      <ul id = "members-list">
+      </ul>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id = "group-add-button">Create Group</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- modal ends here -->
+<script>
+  var number_of_members = 0;
+  var username_array = [];
+$("#show-group-modal-button").click(function(){
+  console.log(username_array);
+})
+$("#add-user-button").click(function(){
+  if(document.getElementById("add-user-input").value.trim() == ""){
+    alert("Enter Username.");
+  } else {
+    $.ajax({
+    url: "{% url 'add-user' %}",
+    method: "POST",
+    data: {
+      user_check : document.getElementById("add-user-input").value,
+    },
+    success: function(data, xhr, status){
+      if(data.message == 'created'){
+        username_array.push(document.getElementById("add-user-input").value);
+        number_of_members = number_of_members + 1;
+        document.getElementById("when-added").innerHTML = "Listing Members...";
+        document.getElementById("members-list").innerHTML += '<li id ="member-'+ number_of_members +'"><span style="color: rgb(83, 158, 209);"> @' + document.getElementById("add-user-input").value + "</span> will be added.</li>";
+        document.getElementById("add-user-input").value = "";
+      } else if(data.message == 'same'){
+        alert("You can't enter your own username.");
+      } else {
+        alert("User not found. Enter the correct username.");
+      }
+    },
+    error: function(xhr, satus, err){
+      alert(err);
+    }
+  }
+  )}
+})
+$("#group-add-button").click(function(){
+  if(document.getElementById("groupname").value.trim() == ""){
+    alert("Enter a valid group name.");
+  } else {
+  $.ajax({
+    url: "{% url 'add-group' %}",
+    method: "POST",
+    data: {
+      username_array: username_array,
+      group_name: document.getElementById("groupname").value,
+      details: document.getElementById("details").value,
+    },
+    success: function(data, xhr, status){
+      if(data.message == "created"){
+        var files = document.getElementById("file").files;
+        console.log(files);
+        var formData = new FormData();
+        formData.append('image', files[0]);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        $.ajax({
+          url: "{% url 'add-group-image' %}",
+          method: "POST",
+          processData: false,
+          contentType: false,
+          data: formData,
+          success: function(data, xhr, status){
+            if(data.message == "image added"){
+              alert("You can reload");
+            } else {
+              alert("Error!");
+            }
+          },
+          error: function(xhr, status, err){
+            alert(err);
+          }
+        })
+        window.location.reload();
+      } else {
+        alert("Error occured while creating group.");
+      }
+    },
+    error: function(xhr, status, err){
+      alert(err);
+    }
+  })}
+})
+var loadFile = function(event) {
+        var img = document.getElementById("preview-image");
+    	img.src = URL.createObjectURL(event.target.files[0]);
+    };
+</script>
+{% endblock %}

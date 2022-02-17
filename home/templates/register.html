@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}
+<title>Split It | Register </title>
+{% endblock %}
+{% block style %}
+<style>
+.main{
+    margin-left: 50%;
+    transform: translate(-50%);
+    width: 300px;
+}
+#submit-button{
+    float: right;
+}    
+</style>
+{% endblock %}
+{% block content %}
+<div class="main mt-4">
+    <center>
+        <b>Register Panel- Split It</b><br>
+    </center>
+    <br>
+    <div class="input-group mb-3 w-100">
+        <span class="input-group-text" id="basic-addon1">👤</span>
+        <input type="text" id = "username-input" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+      </div>
+      <div class="input-group mb-3 w-100">
+        <span class="input-group-text" id="basic-addon1">🤙</span>
+        <input type="text" id = "nickname-input" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon1">
+      </div>  
+    <div class="input-group mb-3 w-100">
+        <span class="input-group-text" id="basic-addon1">🔒</span>
+        <input type="password" id = "password-input" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon1">
+    </div>
+      <button type="button" class="btn btn-outline-dark" id = "submit-button">Register me now!</button>    
+    </div>
+<script>
+    $("#submit-button").click(function() {
+        $.ajax({
+            url: "{% url 'register-user' %}",
+            method: "POST",
+            data: {
+                username: document.getElementById("username-input").value,
+                password: document.getElementById("password-input").value,
+                nickname: document.getElementById("nickname-input").value,
+            },
+            success: function(data, status, xhr){
+                if(data.created === "yes"){
+                    if(!alert("The account has been successfully created.")){
+                    if(window.location.href == "/"){
+                            window.location.reload();
+                        } else {
+                            window.location.replace("/");
+                        }
+                    }
+                } else {
+                    alert("The account already exists with same username.");
+                }
+            },
+            error: function(xhr, status, err){
+                alert("The account already exists with same username.");
+            }
+
+        })
+    })
+</script>      
+{% endblock %}

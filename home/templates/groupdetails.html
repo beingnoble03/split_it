@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% block title %}
+<title>Split It | Groups</title>
+{% endblock %}
+{% block style %}
+<style>
+.content{
+    width: 90%;
+    max-width: 500px;
+    min-width: 300px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    border: 0.1px white solid;
+    box-shadow: 0px 0px 20px grey;
+    border-radius: 10px;
+    margin-bottom: 50px;
+}
+</style>
+{% endblock %}
+{% block navbar %}
+<li class="nav-item">
+  <a class="nav-link" href="/">Dashboard</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="{% url 'group-view' %}">Groups</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link disabled" href="#">Profile</a>
+</li>
+{% endblock %}
+{% block content %}
+<div class = "content">
+  {% if group.image %}
+   <img style="border-radius: 10px;" src="{{ group.image.url }}" width="100%" height="auto">
+  {% else %} 
+   <img style = "border-radius: 10px;" src="https://media.istockphoto.com/photos/group-multiracial-people-having-fun-outdoor-happy-mixed-race-friends-picture-id1211345565?k=20&m=1211345565&s=612x612&w=0&h=Gg65DvzedP7YDo6XFbB-8-f7U7m5zHm1OPO3uIiVFgo=" width="100%" height="auto">
+  {% endif %} 
+   <h5 style="margin-top: 10px; text-align: center;">{{ group.title }}</h5>
+<b><span style="text-align: left; margin-left: 10px; font-size: 18px;">Group Members</span></b>
+   <br>
+    <div style="margin-left: 10px; margin-bottom: 10px;margin-right: 10px;">
+       {% for member in group_members%}
+           <span class="badge bg-dark" style="font-size: 14px;">{{ member.user.first_name }}</span>
+       {% endfor %}
+       </div>
+    <b><span style="text-align: left; margin-left: 10px; font-size: 18px;">Description</span></b>
+    <br>
+    <div style="margin-left: 10px; margin-bottom: 10px;margin-right: 10px;">
+        {% if group.details == None %} No details {% else %} {{ group.details }} {% endif %}  
+    </div>
+<b><span style="text-align: left; margin-left: 10px; font-size: 18px;">Your Expenses in the Group</span></b>
+    <br>
+     <div style="margin-left: 10px; margin-bottom: 10px;margin-right: 10px;">
+      <small>Money spent by You <b><span>₹{{ user_money_spent }}</span></b></small>
+      <small> & Money recieved by You <b><span>₹{{ user_money_received }}</span></b></small><br>
+      {% if status == "positive" %}
+      People in the group owe you <span style="color: tomato;"><b>₹{{ net_amount }}</b></span>
+      {% elif status == "negative" %}
+      You owe People in the group <span style="color: tomato;"><b>₹{{ net_amount }}</b></span>
+      {% else %}
+      All payments are completed from your side.
+      {% endif %}
+     </div>     
+    <b><span style="text-align: left; margin-left: 10px; font-size: 18px;">Split Purchases</span></b><button type="button" class="btn btn-primary btn-sm" style="float: right; margin-right: 10px;" data-bs-toggle="modal" data-bs-target="#staticBackdrop-2">+ Add Split Purchase</button>
+    <br>
+    <div style="margin-left: 10px; margin-bottom: 10px;margin-right: 10px;">
+      {% if purchases_num == 0 %} <small>No Split Purchases Made. Click "Add Split Purchase" button to add one. </small>{% else %}
+        {% for purchase in purchases %}
+        <div class="card" style="margin-top: 10px;">
+            <div class="card-header">
+              Split Purchase #{{ forloop.counter }} (<b>{{ purchase.topic }}</b>)
+            </div>
+            <div class="card-body">
+              <h6 class="card-title">{{ purchase.spender.first_name }} <span style="color: rgb(83, 158, 209);">@{{purchase.spender}}</span> Spent <b style="color: tomato;">₹{{ purchase.amount }}</b> on {{ purchase.datecreated }} </h6>
+              <small>Details</small>
+              <p class="card-text">{{ purchase.details }}</p>
+              {% if purchase.status != "Pending" %}
+              <span class="badge bg-success">✔ Payment Completed</span>
+              {% else %}
+              <span class="badge bg-danger">✖ Pending</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}  
+       {% endif %}  
+    </div>
+    <b><span style="text-align: left; margin-left: 10px; font-size: 18px;">Transactions</span></b>
+    <button type="button" class="btn btn-primary btn-sm" style="float: right; margin-right: 10px;" data-bs-toggle="modal" data-bs-target="#staticBackdrop-1">+ Add Transaction</button>
+    <br>
+    <div style="margin-left: 10px; margin-bottom: 10px;margin-right: 10px;">
+      {% if transactions_num == 0 %} <small>No Transactions Made. Click "Add Transaction" button to add one.</small>{% else %}
+        {% for transaction in transactions %}
+        <div class="card" style="margin-top: 10px;">
+            <div class="card-header">
+              Transaction #{{ forloop.counter }}
+            </div>
+            <div class="card-body">
+              <h6 class="card-title">{{ transaction.spender.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.spender}}</span> → {{ transaction.getter.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.getter}}</span></h6>
+              <small>Amount</small>
+              <b><p class="card-text" style="color: tomato;">₹{{ transaction.amount }}</p></b>
+              <small style="margin-top: 5px;">Topic</small>
+              <p class="card-text">{% if transaction.topic == "" %}No Topic Mentioned {% else %} {{ transaction.topic }} {% endif %}</p>
+            </div>
+          </div>
+        {% endfor %}
+        {% endif %}   
+    </div>
+</div>
+<!--Modals Start Here-->
+<!--transaction Modal-->
+<div class="modal fade" id="staticBackdrop-1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Transaction</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>I {{ request.user.first_name }} <span style="color: rgb(83, 158, 209);">@{{request.user}}</span>,</h6>
+          <div class="input-group mb-3">
+              <span class="input-group-text">Transfers ₹</span>
+              <input type="number" class="form-control" id="amount-transaction" placeholder="Enter Amount">
+          </div>
+          <div class="input-group mb-3">
+              <span class="input-group-text">For</span>
+              <input type="text" class="form-control" id="topic-transaction" placeholder="Enter Topic/Item">
+          </div>
+          <h6>To</h6>
+          <div class="btn-group btn-group-sm" role="group" aria-label="Basic radio toggle button group">
+            {% for member in group_members%}
+            {% if member.user != request.user %}
+            <input type="radio" class="btn-check" name="btnradio" id="btnradio{{ forloop.counter }}" autocomplete="off" onclick="getter({{ member.user.id }})">
+            <label class="btn btn-outline-primary" for="btnradio{{ forloop.counter }}">@{{ member.user }}</label>
+            {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id = "transaction-button">Create Transaction</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!--purchase Modal-->  
+  <div class="modal fade" id="staticBackdrop-2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">Creating Purchase Instance</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <h6>{{ request.user.first_name }} <span style="color: rgb(83, 158, 209);">@{{request.user}}</span></h6>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Spent ₹</span>
+                <input type="number" class="form-control" id="amount-purchase" placeholder="Enter Amount">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">For</span>
+                <input type="text" class="form-control" id="topic-purchase" placeholder="Enter Topic/Item">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">On</span>
+                <input type="date" class="form-control" id="date" placeholder="Enter date">
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text">Description</span>
+                <textarea class="form-control" id="details"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="purchase-button">Split payment for purchase</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<!--Modals End Here-->
+<script>
+var getter_id = "Not Selected";
+function getter(id){
+  getter_id = id;
+  console.log(getter_id);
+}  
+//AJAX starts here.  
+$("#purchase-button").click(function(){
+    $.ajax({
+    url: "{% url 'purchase-submit' %}",
+    method: "POST",
+    data: {
+        id: {{ group.id }},
+        amount: document.getElementById("amount-purchase").value,
+        topic: document.getElementById("topic-purchase").value,
+        date: document.getElementById("date").value,
+        details: document.getElementById("details").value
+    },
+    success: function(data,xhr,status){
+        alert("Purchase Instance Successfully Created.");
+        window.location.reload();
+    },
+    error: function(xhr,status,err){
+        alert(err);
+    }
+    })
+})
+
+$("#transaction-button").click(function(){
+    $.ajax({
+    url: "{% url 'transaction-submit' %}",
+    method: "POST",
+    data: {
+        id: {{ group.id }},
+        amount: document.getElementById("amount-transaction").value,
+        topic: document.getElementById("topic-transaction").value,
+        getter_id: getter_id,
+    },
+    success: function(data,xhr,status){
+        alert("Transaction has been done.");
+        window.location.reload();
+    },
+    error: function(xhr,status,err){
+        alert(err);
+    }
+    })
+})
+//AJAX ends here
+</script>    
+{% endblock %}

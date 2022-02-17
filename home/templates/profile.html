@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}
+<title>Split It | Groups</title>
+{% endblock %}
+{% block style %}
+<style>
+.profile-area{
+    width: 90%;
+    max-width: 400px;
+    min-width: 300px;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    border: 0.1px white solid;
+    box-shadow: 0px 0px 20px grey;
+    border-radius: 10px;
+    margin-bottom: 50px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.group-info{
+    align-items: center;
+    text-align: center;
+    margin-top: 10px;
+    margin-left: 15px;
+    margin-right: 15px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    border: 1px grey solid;
+    border-radius: 10px;
+}
+/* .image{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    background-image: url('{{ picture.picture.url }}');
+    background-size: auto;
+    background-position: center;
+    background-repeat: no-repeat;
+} */
+.add-image{
+    right: 0px;
+    bottom: 5px;
+    transform: translate(-50%);
+    position: absolute;
+    color:darkslategrey;
+    cursor: pointer;
+}
+</style>
+{% endblock %}
+{% block navbar %}
+<li class="nav-item">
+  <a class="nav-link" href="/">Dashboard</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="{% url 'group-view' %}">Groups</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link active" aria-current="page" href="{% url 'profile-page' %}">Profile</a>
+</li>
+{% endblock %}
+{% block content %}
+<div class = "profile-area">
+    <div class = "image" style="position:relative; width: 150px; margin-left: 50%; transform: translateX(-50%);">
+
+        <img src="{{ picture.picture.url }}" id = "image-frame" style="width: 150px; height: 150px; border-radius: 50%; margin-left: 50%; transform: translateX(-50%);">
+        
+        <div class = "add-image" id="add-image-text">
+            <!-- <label for="file" style="cursor: pointer;"> -->
+                <img src="https://cdn-icons-png.flaticon.com/512/182/182942.png" data-bs-toggle="modal" data-bs-target="#exampleModal" id = "edit-icon" style="width: 35px; height: 35px;">
+            <!-- </label> -->
+        </div>
+    </div>
+<!-- </form> -->
+    <div style="text-align: center; margin-top: 10px;">
+        <h4>{{ request.user.first_name }}</h4>
+    </div>
+    <div class="user-info" style="margin-top: 25px; margin-left: 15px; margin-right: 15px;">
+        <h6><b>User ID: </b><span style="color: tomato;">#{{ request.user.id }}</span></h6>
+        <h6><b>Username: </b><span style="color: rgb(83, 158, 209);">@{{ request.user }}</span></h6>
+        <h6><b>Transactions Amount: </b><span style="color: tomato;">₹{{ total_transaction_amount }}</span></h6>
+        <h6><b>Split Purchases Amount: </b><span style="color: tomato;">₹{{ total_purchase_amount }}</span></h6>
+    </div>
+    <div class = "group-info">
+        <h6><b>Groups Joined</b></h6>
+        {% if groups_num == 0 %}
+        <small>No groups joined.</small>
+        {% else %}
+        {% for group in groups %}
+        <span class="badge bg-info text-dark" style="margin: 2px;">{{ group.group.title }}</span>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class = "group-info">
+        <h6><b>Groups Created</b></h6>
+        {% if groups_created_num == 0 %}
+        <small>No groups created.</small>
+        {% else %}
+        {% for group in groups_created %}
+        <span class="badge bg-info text-dark" style="margin: 2px;">{{ group.title }}</span>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Upload Image</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <!-- <form method = "post" enctype="multipart/form-data"> -->
+            <!-- {% csrf_token %} -->
+        <div class="modal-body">
+            <img id = "preview-image" style="width: 200px; height: 200px;">
+            <input type="file"  accept="image/gif, image/jpeg, image/png" name="image" id="file" onchange="loadFile(event)">
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" id="upload-button">Upload</button>
+        </div>
+    <!-- </form> -->
+      </div>
+    </div>
+  </div>
+<script>
+    var loadFile = function(event) {
+        var img = document.getElementById("preview-image");
+    	img.src = URL.createObjectURL(event.target.files[0]);
+    };
+    $("#upload-button").click(function() {
+        var files = document.getElementById("file").files;
+        console.log(files);
+        var formData = new FormData();
+        formData.append('image', files[0]);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        console.log("hello world");
+        if(files.length > 0 ){
+            console.log("confirm");
+            $.ajax({
+            url: "{% url 'profile_picture_view' %}",
+            enctype: "multipart/form-data",
+            method: "POST",
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function(data, status, xhr){
+                alert("Image Uploaded Successfully!");
+                window.location.reload();
+            },
+            error: function(xhr, status, err){
+                alert("Some error occured");
+            }
+            })
+        }
+    })
+</script>
+{% endblock %}

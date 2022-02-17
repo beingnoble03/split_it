@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}
+<title>Split It | Home Page</title>
+{% endblock %}
+{% block style %}
+<style>
+.main{
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 40px;
+}
+.restrict{
+    max-width: 350px;
+    margin-bottom: 20px;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="main">
+    <h4>Hi {{ request.user.first_name }}!</h4>
+    <b>
+        <span style="color: tomato; font-size: 18px;">Welcome to Split It. You can manage all your group expenses, split purchases and create transactions, here.</span>
+    </b>
+    <div class="card mt-4 text-center">
+        <div class="card-body">
+          <h5 class="card-title">Groups you have joined.</h5>
+          {% if groups_joined_num == 0 %}
+          <p class="card-text">You haven't joined any group so far. Ask group owner to make you a member or create your own group.</p>
+          {% else %}
+          <p class="card-text">These are some of the recent groups you have joined. <a href="{% url 'group-view' %}">View all your Groups here.</a></p>
+          {% endif %}
+          <div class="row" style="justify-content: center;margin-right: 5px;">
+            {% for group_joined in groups_joined %}
+            <div class="card text-white bg-dark mb-3" style="max-width: 22rem; margin-left: 10px;">
+                <div class="card-header">Group #{{ group_joined.group.id }}</div>
+                <div class="card-body">
+                  <h5 class="card-title">{{ group_joined.group.title }}</h5>
+                  <p class="card-text">{{ group_joined.group.details }}</p>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-light btn-sm" href="/group/{{ group_joined.group.id }}">View Details</a>
+                  </div>
+              </div>
+          {% endfor %}                         
+            </div>
+        </div>
+    </div>
+    <div class="card mt-4 text-center">
+        <div class="card-body">
+          <h5 class="card-title">Transactions involved.</h5>
+          {% if transactions_num == 0 %}
+          <p class="card-text">You aren't involved in any transactions so far.</p>
+          {% else %}
+          <p class="card-text">These are some of the recent transactions you were involved in.</p>
+          {% endif %}
+          <div class="row" style="justify-content: center;margin-right: 5px;">
+            {% for transaction in transactions_getter %}
+            <div class="card text-white bg-dark mb-3" style="max-width: 22rem; margin-left: 10px;">
+                <div class="card-header">Transaction #{{ transaction.id }}</div>
+                <div class="card-body">
+                  <h5 class="card-title">{{ transaction.topic }}</h5>
+                  <p class="card-text">
+                      {{ transaction.spender.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.spender}}</span> → {{ transaction.getter.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.getter}}</span>
+                      <br>
+                      <span style="color: tomato;">Amount: ₹{{ transaction.amount }}</span>
+                  </p>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-light btn-sm" href="/group/{{ transaction.group.id }}">View Group</a>
+                  </div>
+              </div>
+          {% endfor %}
+          {% for transaction in transactions_spender %}
+          <div class="card text-white bg-dark mb-3" style="max-width: 22rem; margin-left: 10px;">
+              <div class="card-header">Transaction #{{ transaction.id }}</div>
+              <div class="card-body">
+                <h5 class="card-title">{{ transaction.topic }}</h5>
+                <p class="card-text">
+                    {{ transaction.spender.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.spender}}</span> → {{ transaction.getter.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.getter}}</span>
+                    <br>
+                    <span style="color: tomato;">Amount: ₹{{ transaction.amount }}</span>
+                </p>
+              </div>
+              <div class="card-footer">
+                  <a class="btn btn-light btn-sm" href="/group/{{ transaction.group.id }}">View Group</a>
+                </div>
+            </div>
+        {% endfor %}                         
+            </div>
+        </div>
+    </div>
+    <div class="card mt-4 text-center">
+        <div class="card-body">
+          <h5 class="card-title">Split Purchases involved.</h5>
+          {% if purchases_num == 0 %}
+          <p class="card-text">You aren't involved in any split purchases so far.</p>
+          {% else %}
+          <p class="card-text">These are some of the recent split purchases you made.</p>
+          {% endif %}
+          <div class="row" style="justify-content: center;margin-right: 5px;">
+            {% for purchase in purchases %}
+            <div class="card text-white bg-dark mb-3" style="max-width: 22rem; margin-left: 10px;">
+                <div class="card-header">Split Purchase #{{ purchase.id }}</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ purchase.topic }}</h5>
+                    <p class="card-text">{{ purchase.details }}
+                    <br>
+                    <span style="color: tomato;">Amount: ₹{{ purchase.amount }}</span>
+                    <br>
+                    <span style="color: rgb(83, 158, 209);">Date: {{ purchase.datecreated }}</span>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <a class="btn btn-light btn-sm" href="/group/{{ purchase.group.id }}">View Group</a>
+                  </div>
+              </div>
+          {% endfor %}                         
+            </div>
+        </div>
+    </div>
+    {% if transactions_num != 0 %}
+    <div class="card mt-4 text-center">
+        <div class="card-body">
+            <h5 class="card-title">Statistics.</h5>
+        <div style="width: 400px; height: 400px; margin-left: 50%; transform: translateX(-50%); margin-bottom: 40px;">
+            <canvas id="myChart" width="100px" height="100px"></canvas>
+        </div>
+        </div>
+    </div>
+{% endif %}
+</div>
+<script>
+    function getRandomColor() {
+      var letters = '0123456789ABCDEF';
+      var color = '#';
+      for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    }
+    const ctx = document.getElementById('myChart');
+    const myChart = new Chart(ctx, {
+    type: 'pie',
+    data: {
+        labels: [
+            {% for group in groups_all %}
+            '{{ group.group.title }}',
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Group Expenses',
+            data: [
+            {% for expense in expenses %}
+            '{{ expense }}',
+            {% endfor %}
+        ],
+            backgroundColor: [
+            {% for group in groups_all %}
+            getRandomColor(),
+            {% endfor %}
+            ],
+            borderColor: [
+                'rgba(00, 00, 00, 1)',
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Your Transactions in various groups',
+                font: {
+                        size: 16
+                    },
+            }
+        }
+    }
+});
+</script>
+{% endblock %}
