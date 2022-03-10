@@ -96,6 +96,13 @@ $("#add-user-button").click(function(){
   if(document.getElementById("add-user-input").value.trim() == ""){
     alert("Enter Username.");
   } else {
+    var count =0;
+    for (let i=0; i<number_of_members; i++){
+          if(document.getElementById("add-user-input").value == username_array[i]){
+            count = count + 1;
+          }
+        }
+    if (count == 0) {
     $.ajax({
     url: "{% url 'add-user' %}",
     method: "POST",
@@ -109,7 +116,8 @@ $("#add-user-button").click(function(){
         document.getElementById("when-added").innerHTML = "Listing Members...";
         document.getElementById("members-list").innerHTML += '<li id ="member-'+ number_of_members +'"><span style="color: rgb(83, 158, 209);"> @' + document.getElementById("add-user-input").value + "</span> will be added.</li>";
         document.getElementById("add-user-input").value = "";
-      } else if(data.message == 'same'){
+        }
+       else if(data.message == 'same'){
         alert("You can't enter your own username.");
       } else {
         alert("User not found. Enter the correct username.");
@@ -118,8 +126,11 @@ $("#add-user-button").click(function(){
     error: function(xhr, satus, err){
       alert(err);
     }
+  })
+  } else {
+    alert("Already Added!");
   }
-  )}
+}
 })
 $("#group-add-button").click(function(){
   if(document.getElementById("groupname").value.trim() == ""){
