@@ -154,7 +154,7 @@ def group_details(request, groupid):
 
         for x in purchases:
             if x.spender == request.user:
-                total_user_spent += math.floor((group_members_count -1)*(x.amount/group_members_count)*10)/10
+                total_user_spent += (group_members_count -1)*(x.amount)
 
         total_user_received = 0.0
         for x in user_money_received:
@@ -162,19 +162,16 @@ def group_details(request, groupid):
 
         for x in purchases:
             if x.spender != request.user:
-                total_user_received += math.floor((x.amount/group_members_count)*10)/10
+                total_user_received += x.amount
 
         if total_user_received - total_user_spent > 0:
             net_amount = total_user_received - total_user_spent
             status = "negative"
-        elif total_user_spent == total_user_received:
-            net_amount = 0.0
-            status = "neutral"
-        else:
-            net_amount = total_user_spent - total_user_received
-            status = "positive"    
-
-        context = {
+            getter = get_getter(request, groupid)
+            getter_count = len(getter)
+            if getter_count == 1:
+                getter = getter[0] 
+            context = {
             'group' : group,
             'group_members' : group_members,
             'purchases': purchases,
@@ -185,10 +182,64 @@ def group_details(request, groupid):
             'user_money_received': total_user_received,
             'status': status,
             'net_amount': net_amount,
-            'picture': picture
-        }
+            'picture': picture,
+            'getter' : getter,
+            'getter_count': getter_count,
+            }
+            print(getter)                    
+        elif total_user_spent == total_user_received:
+            net_amount = 0.0
+            status = "neutral"
+            context = {
+            'group' : group,
+            'group_members' : group_members,
+            'purchases': purchases,
+            'purchases_num': purchases_num,
+            'transactions_num': transactions_num,
+            'transactions': transactions,
+            'user_money_spent': total_user_spent,
+            'user_money_received': total_user_received,
+            'status': status,
+            'net_amount': net_amount,
+            'picture': picture,
+            }                
+        else:
+            net_amount = total_user_spent - total_user_received
+            status = "positive"
+            context = {
+            'group' : group,
+            'group_members' : group_members,
+            'purchases': purchases,
+            'purchases_num': purchases_num,
+            'transactions_num': transactions_num,
+            'transactions': transactions,
+            'user_money_spent': total_user_spent,
+            'user_money_received': total_user_received,
+            'status': status,
+            'net_amount': net_amount,
+            'picture': picture,
+            }    
         # print(net_amount)
         return render(request, "groupdetails.html", context)    
+
+
+def get_getter(request, groupid):
+    group = Group.objects.get(id = groupid)
+    group_members = GroupMember.objects.filter(group = group)
+    members_with_negative = []
+    for member in group_members:
+        if member.user != request.user:
+            money_spent = 0
+            money_get = 0
+            total_transactions_spent = TotalTransaction.objects.filter(group = group, spender = member.user)
+            total_transactions_get = TotalTransaction.objects.filter(group = group, getter = member.user)
+            for x in total_transactions_spent:
+                money_spent += x.amount
+            for x in total_transactions_get:
+                money_get += x.amount
+            if money_get < money_spent:
+                members_with_negative.append(member)
+    return members_with_negative            
 
 @csrf_exempt
 def purchase_submit(request):
@@ -200,9 +251,14 @@ def purchase_submit(request):
         date = request.POST.get("date")
         details = request.POST.get("details")
         group = Group.objects.get(id = request.POST.get("id"))
+        groupmembers = GroupMember.objects.filter(group = group)
         amount = request.POST.get("amount")
         new_purchase = Purchase.objects.create(spender = spender, topic = topic, datecreated = date, details = details, group = group, amount = amount)
         new_purchase.save()
+        for member in groupmembers:
+            if member.user != spender:
+                new_totaltransaction = TotalTransaction.objects.create(spender = spender, amount = amount, getter = member.user, group = group)
+                new_totaltransaction.save()
         response_data = {
            'message': 'successful',
         }
@@ -221,10 +277,12 @@ def transaction_submit(request):
         getter = User.objects.get(id = request.POST.get("getter_id"))
         new_transaction = Transaction.objects.create(spender = spender, topic = topic, group = group, amount = amount, getter = getter)
         new_transaction.save()
+        new_totaltransaction = TotalTransaction.objects.create(spender = spender, getter = getter, amount = amount, group = group)
+        new_totaltransaction.save()
         response_data = {
            'message': 'successful',
         }
-
+        
     return JsonResponse(response_data)   
 
 @csrf_exempt

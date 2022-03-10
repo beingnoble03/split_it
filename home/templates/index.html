@@ -58,7 +58,7 @@
             <div class="card text-white bg-dark mb-3" style="max-width: 22rem; margin-left: 10px;">
                 <div class="card-header">Transaction #{{ transaction.id }}</div>
                 <div class="card-body">
-                  <h5 class="card-title">{{ transaction.topic }}</h5>
+                  <h5 class="card-title">{% if transaction.topic == "" %}No Topic Mentioned {% else %} {{ transaction.topic }} {% endif %}</h5>
                   <p class="card-text">
                       {{ transaction.spender.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.spender}}</span> → {{ transaction.getter.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.getter}}</span>
                       <br>
@@ -74,7 +74,7 @@
           <div class="card text-white bg-dark mb-3" style="max-width: 22rem; margin-left: 10px;">
               <div class="card-header">Transaction #{{ transaction.id }}</div>
               <div class="card-body">
-                <h5 class="card-title">{{ transaction.topic }}</h5>
+                <h5 class="card-title">{% if transaction.topic == "" %} No Topic Mentioned {% else %} {{ transaction.topic }} {% endif %}</h5>
                 <p class="card-text">
                     {{ transaction.spender.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.spender}}</span> → {{ transaction.getter.first_name }} <span style="color: rgb(83, 158, 209);">@{{transaction.getter}}</span>
                     <br>
@@ -105,7 +105,7 @@
                     <h5 class="card-title">{{ purchase.topic }}</h5>
                     <p class="card-text">{{ purchase.details }}
                     <br>
-                    <span style="color: tomato;">Amount: ₹{{ purchase.amount }}</span>
+                    <span style="color: tomato;">Amount(Per Member): ₹{{ purchase.amount }}</span>
                     <br>
                     <span style="color: rgb(83, 158, 209);">Date: {{ purchase.datecreated }}</span>
                     </p>
@@ -118,13 +118,20 @@
             </div>
         </div>
     </div>
-    {% if transactions_num != 0 %}
+    {% if transactions_spender_num != 0 %}
     <div class="card mt-4 text-center">
         <div class="card-body">
             <h5 class="card-title">Statistics.</h5>
         <div style="width: 400px; height: 400px; margin-left: 50%; transform: translateX(-50%); margin-bottom: 40px;">
             <canvas id="myChart" width="100px" height="100px"></canvas>
         </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="card mt-4 text-center">
+        <div class="card-body">
+            <h5 class="card-title">Statistics.</h5>
+            Hey {{ request.user.first_name }}, spend some cash in various groups to Get all the stats for transactions.
         </div>
     </div>
 {% endif %}

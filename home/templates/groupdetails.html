@@ -25,7 +25,7 @@
   <a class="nav-link active" aria-current="page" href="{% url 'group-view' %}">Groups</a>
 </li>
 <li class="nav-item">
-  <a class="nav-link disabled" href="#">Profile</a>
+  <a class="nav-link" href="{% url 'profile-page' %}">Profile</a>
 </li>
 {% endblock %}
 {% block content %}
@@ -60,7 +60,26 @@
       {% else %}
       All payments are completed from your side.
       {% endif %}
-     </div>     
+     </div>
+     <b><span style="text-align: left; margin-left: 10px; font-size: 18px;">Money Needed to be Returned</span></b>
+     <br>
+      <div style="margin-left: 10px; margin-bottom: 10px;margin-right: 10px;">
+      {% if status == "positive" %}
+      No money left to be returned from your side 😊
+      {% elif status == "negative" %}
+      {% if getter_count == 1 %}
+      You can add transaction to <span style="color: rgb(83, 158, 209);">@{{ getter.user }} </span>for <span style="color: tomato;"><b>₹{{ net_amount }}</b></span>
+      {% else %}
+      <small>You have {{ getter_count }} choices: </small><br>
+      {% for x in getter %}
+      <span style="color: tomato;">#{{ forloop.counter }} </span>You can add transaction to <span style="color: rgb(83, 158, 209);">@{{ x.user }} </span>for <b>₹{{ net_amount }}</b><br>
+      {% endfor %}
+      {% endif %}
+      {% else %}
+      No payments left 😊
+      {% endif %}
+      </div>     
+ 
     <b><span style="text-align: left; margin-left: 10px; font-size: 18px;">Split Purchases</span></b><button type="button" class="btn btn-primary btn-sm" style="float: right; margin-right: 10px;" data-bs-toggle="modal" data-bs-target="#staticBackdrop-2">+ Add Split Purchase</button>
     <br>
     <div style="margin-left: 10px; margin-bottom: 10px;margin-right: 10px;">
@@ -71,14 +90,9 @@
               Split Purchase #{{ forloop.counter }} (<b>{{ purchase.topic }}</b>)
             </div>
             <div class="card-body">
-              <h6 class="card-title">{{ purchase.spender.first_name }} <span style="color: rgb(83, 158, 209);">@{{purchase.spender}}</span> Spent <b style="color: tomato;">₹{{ purchase.amount }}</b> on {{ purchase.datecreated }} </h6>
+              <h6 class="card-title">{{ purchase.spender.first_name }} <span style="color: rgb(83, 158, 209);">@{{purchase.spender}}</span> Spent(Per Member) <b style="color: tomato;">₹{{ purchase.amount }}</b> on {{ purchase.datecreated }} </h6>
               <small>Details</small>
               <p class="card-text">{{ purchase.details }}</p>
-              {% if purchase.status != "Pending" %}
-              <span class="badge bg-success">✔ Payment Completed</span>
-              {% else %}
-              <span class="badge bg-danger">✖ Pending</span>
-              {% endif %}
             </div>
           </div>
         {% endfor %}  
@@ -153,7 +167,7 @@
         <div class="modal-body">
             <h6>{{ request.user.first_name }} <span style="color: rgb(83, 158, 209);">@{{request.user}}</span></h6>
             <div class="input-group mb-3">
-                <span class="input-group-text">Spent ₹</span>
+                <span class="input-group-text">Spent(Per Member) ₹</span>
                 <input type="number" class="form-control" id="amount-purchase" placeholder="Enter Amount">
             </div>
             <div class="input-group mb-3">
