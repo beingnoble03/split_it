@@ -199,6 +199,23 @@ function getter(id){
 }  
 //AJAX starts here.  
 $("#purchase-button").click(function(){
+    new Notify ({
+        status: 'warning',
+        title: 'Processing',
+        text: 'Adding Split Payment...',
+        effect: 'slide',
+        speed: 300,
+        customClass: '',
+        customIcon: '',
+        showIcon: true,
+        showCloseButton: false,
+        autoclose: true,
+        autotimeout: 2500,
+        gap: 50,
+        distance: 20,
+        type: 2,
+        position: 'right bottom'
+    })
     $.ajax({
     url: "{% url 'purchase-submit' %}",
     method: "POST",
@@ -210,7 +227,6 @@ $("#purchase-button").click(function(){
         details: document.getElementById("details").value
     },
     success: function(data,xhr,status){
-        alert("Purchase Instance Successfully Created.");
         window.location.reload();
     },
     error: function(xhr,status,err){
@@ -220,6 +236,23 @@ $("#purchase-button").click(function(){
 })
 
 $("#transaction-button").click(function(){
+    new Notify ({
+        status: 'warning',
+        title: 'Processing',
+        text: 'Adding Transaction...',
+        effect: 'slide',
+        speed: 300,
+        customClass: '',
+        customIcon: '',
+        showIcon: true,
+        showCloseButton: false,
+        autoclose: true,
+        autotimeout: 2500,
+        gap: 50,
+        distance: 20,
+        type: 2,
+        position: 'right bottom'
+    })
     $.ajax({
     url: "{% url 'transaction-submit' %}",
     method: "POST",
@@ -230,7 +263,6 @@ $("#transaction-button").click(function(){
         getter_id: getter_id,
     },
     success: function(data,xhr,status){
-        alert("Transaction has been done.");
         window.location.reload();
     },
     error: function(xhr,status,err){

@@ -10,7 +10,10 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js" integrity="sha512-TW5s0IT/IppJtu76UbysrBH9Hy/5X41OTAbQuffZFU6lQ1rdcLHzpU5BzVvr/YFykoiMYZVWlr/PX1mDcfM9Qg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js" integrity="sha512-TW5s0IT/IppJtu76UbysrBH9Hy/5X41OTAbQuffZFU6lQ1rdcLHzpU5BzVvr/YFykoiMYZVWlr/PX1mDcfM9Qg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- Added Simple Notify -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simple-notify@0.5.4/dist/simple-notify.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/simple-notify@0.5.4/dist/simple-notify.min.js"></script>  
   {% load static %}
 {% block style%}
 {% endblock %}
@@ -94,6 +97,23 @@
     </div>
     <script>
       $("#logout-button").click(function() {
+        new Notify ({
+        status: 'error',
+        title: 'Wait',
+        text: 'Loging you out...',
+        effect: 'slide',
+        speed: 300,
+        customClass: '',
+        customIcon: '',
+        showIcon: true,
+        showCloseButton: false,
+        autoclose: true,
+        autotimeout: 2500,
+        gap: 50,
+        distance: 20,
+        type: 3,
+        position: 'right bottom'
+        })
         $.ajax({
             url: "{% url 'logout-user' %}",
             method: "GET",
@@ -110,6 +130,26 @@
             }
 
         })
+    })
+    const btn = document.querySelector('#submit-button')
+    btn.addEventListener('click', () => {
+      new Notify ({
+        status: 'warning',
+        title: 'Wait',
+        text: 'Processing your request...',
+        effect: 'slide',
+        speed: 300,
+        customClass: '',
+        customIcon: '',
+        showIcon: true,
+        showCloseButton: false,
+        autoclose: true,
+        autotimeout: 2500,
+        gap: 50,
+        distance: 20,
+        type: 2,
+        position: 'right bottom'
+      })
     })
     </script> 
 </body>

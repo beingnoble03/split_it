@@ -7,7 +7,7 @@
 .main{
     margin-left: 50%;
     transform: translate(-50%);
-    width: 300px;
+    width: 350px;
 }
 #submit-button{
     float: right;
@@ -15,12 +15,18 @@
 </style>
 {% endblock %}
 {% block content %}
-<div class="main mt-4">
+<div class="main mt-4" style="margin-bottom: 150px;">
     <center>
         <b>Register Panel- Split It</b><br>
     </center>
     <br>
     <div class="input-group mb-3 w-100">
+        <div class="card mb-3">
+            <img src="https://res.cloudinary.com/dfsuajbhj/image/upload/v1646900908/tlhjfnoatdce1usnmeyn.png" class="card-img-top" alt="Loading...">
+            <div class="card-body">
+              <p class="card-text"><small>You can change your profile picture later in the <b>Profile</b> Tab.</small></p>
+            </div>
+          </div>
         <span class="input-group-text" id="basic-addon1">👤</span>
         <input type="text" id = "username-input" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
       </div>

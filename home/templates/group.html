@@ -123,8 +123,41 @@ $("#add-user-button").click(function(){
 })
 $("#group-add-button").click(function(){
   if(document.getElementById("groupname").value.trim() == ""){
-    alert("Enter a valid group name.");
+    new Notify ({
+        status: 'error',
+        title: 'Invalid',
+        text: 'Group Name must not be empty.',
+        effect: 'slide',
+        speed: 300,
+        customClass: '',
+        customIcon: '',
+        showIcon: true,
+        showCloseButton: false,
+        autoclose: true,
+        autotimeout: 2000,
+        gap: 50,
+        distance: 20,
+        type: 3,
+        position: 'right bottom'
+      })
   } else {
+    new Notify ({
+        status: 'warning',
+        title: 'Processing',
+        text: 'Adding group details...',
+        effect: 'slide',
+        speed: 300,
+        customClass: '',
+        customIcon: '',
+        showIcon: true,
+        showCloseButton: false,
+        autoclose: true,
+        autotimeout: 2500,
+        gap: 50,
+        distance: 20,
+        type: 2,
+        position: 'right bottom'
+      })  
   $.ajax({
     url: "{% url 'add-group' %}",
     method: "POST",
@@ -135,6 +168,23 @@ $("#group-add-button").click(function(){
     },
     success: function(data, xhr, status){
       if(data.message == "created"){
+        new Notify ({
+        status: 'warning',
+        title: 'Processing',
+        text: 'Adding group image...',
+        effect: 'slide',
+        speed: 300,
+        customClass: '',
+        customIcon: '',
+        showIcon: true,
+        showCloseButton: false,
+        autoclose: true,
+        autotimeout: 2500,
+        gap: 50,
+        distance: 20,
+        type: 2,
+        position: 'right bottom'
+      })
         var files = document.getElementById("file").files;
         console.log(files);
         var formData = new FormData();
@@ -148,7 +198,7 @@ $("#group-add-button").click(function(){
           data: formData,
           success: function(data, xhr, status){
             if(data.message == "image added"){
-              alert("You can reload");
+              window.location.reload();
             } else {
               alert("Error!");
             }
@@ -157,7 +207,6 @@ $("#group-add-button").click(function(){
             alert(err);
           }
         })
-        window.location.reload();
       } else {
         alert("Error occured while creating group.");
       }
