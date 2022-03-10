@@ -35,7 +35,9 @@
                 <div class="card-header">Group #{{ group_joined.group.id }}</div>
                 <div class="card-body">
                   <h5 class="card-title">{{ group_joined.group.title }}</h5>
-                  <p class="card-text">{{ group_joined.group.details }}</p>
+                  <p class="card-text">
+                    {% if group_joined.group.details == "" %} No details {% else %} {{ group_joined.group.details }} {% endif %}
+                  </p>
                 </div>
                 <div class="card-footer">
                     <a class="btn btn-light btn-sm" href="/group/{{ group_joined.group.id }}">View Details</a>

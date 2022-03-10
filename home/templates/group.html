@@ -36,7 +36,7 @@
       <h5 class="card-title">{{ group_get.group.title }}</h5>
       <small>Details</small>
       <br>
-      <p class="card-text">{% if group_get.group.details == None %} No details {% else %} {{ group_get.group.details }} {% endif %}</p>
+      <p class="card-text">{% if group_get.group.details == "" %} No details {% else %} {{ group_get.group.details }} {% endif %}</p>
     </div>
     <div class="card-footer" style="margin-bottom: 5px;">
     <a href="/group/{{ group_get.group.id }}">
