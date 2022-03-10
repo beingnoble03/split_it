@@ -12,5 +12,8 @@ IMG Winter Assignment Project made using Django. Split payments, add groups, add
 7. Responsive design: Adjustable across all devices
 8. Dashboard shows recent Transaction, Split Payments & Groups making it easy for a user to get an overview of the current situation.
 
+### Note
+Be sure to add all group members at once when creating a group. This is done to ensure all past split payments are not altered when a new member is added.
+
 ### Cloudinary and Postgres Implementation
 The App is linked with Postgres Database instead of the default DB SQLite3 & All the media files are handled and stored on Cloudinary. This makes App seamless and all the data stored even when the Heroku's Dyno restarts.
