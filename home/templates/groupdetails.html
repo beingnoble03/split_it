@@ -40,7 +40,7 @@
    <br>
     <div style="margin-left: 10px; margin-bottom: 10px;margin-right: 10px;">
        {% for member in group_members%}
-           <span class="badge bg-dark" style="font-size: 14px;">{{ member.user.first_name }}</span>
+           <span class="badge bg-dark" style="font-size: 16px; margin-top: 10px;"><img style="border-radius: 50%;" src="{{ member.image.picture.url }}" width="30px" height="30px"><span style="margin-left: 10px;">{{ member.user.first_name }}</span></span>
        {% endfor %}
        </div>
     <b><span style="text-align: left; margin-left: 10px; font-size: 18px;">Description</span></b>

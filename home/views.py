@@ -147,6 +147,9 @@ def group_details(request, groupid):
         user_money_spent = Transaction.objects.filter(spender = request.user, group = group)
         user_money_received = Transaction.objects.filter(getter = request.user, group = group)
         picture = prof_pic(request)
+        for group_member in group_members:
+            image = prof_pic(group_member)
+            setattr(group_member, "image", image)
 
         total_user_spent = 0.0
         for x in user_money_spent:
