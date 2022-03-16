@@ -1,6 +1,4 @@
 import json
-from tokenize import group
-from urllib import response
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -396,3 +394,13 @@ def profile_picture_view(request):
     print("reached this view")
     new_image.save()
     return JsonResponse("done", safe=False)
+
+@csrf_exempt
+def group_image_change(request):
+    groupid = request.POST.get('id')
+    print(groupid)
+    image = request.FILES.get('image')
+    group = Group.objects.get(id = groupid)
+    group.image = image
+    group.save()
+    return JsonResponse("changed", safe=False)

@@ -31,10 +31,11 @@
 {% block content %}
 <div class = "content">
   {% if group.image %}
-   <img style="border-radius: 10px;" src="{{ group.image.url }}" width="100%" height="auto">
+   <img style="border-radius: 10px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;" src="{{ group.image.url }}" width="100%" height="auto">
   {% else %} 
-   <img style = "border-radius: 10px;" src="https://media.istockphoto.com/photos/group-multiracial-people-having-fun-outdoor-happy-mixed-race-friends-picture-id1211345565?k=20&m=1211345565&s=612x612&w=0&h=Gg65DvzedP7YDo6XFbB-8-f7U7m5zHm1OPO3uIiVFgo=" width="100%" height="auto">
-  {% endif %} 
+   <img style = "border-radius: 10px; border-bottom-left-radius: 0px; border-bottom-right-radius: 0px;" src="https://media.istockphoto.com/photos/group-multiracial-people-having-fun-outdoor-happy-mixed-race-friends-picture-id1211345565?k=20&m=1211345565&s=612x612&w=0&h=Gg65DvzedP7YDo6XFbB-8-f7U7m5zHm1OPO3uIiVFgo=" width="100%" height="auto">
+  {% endif %}
+   <button class="btn btn-sm btn-primary" style="width: 100%; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; border-top-left-radius: 0px; border-top-right-radius: 0px;" data-bs-toggle="modal" data-bs-target="#exampleModal">Change Group Image</button>
    <h5 style="margin-top: 10px; text-align: center;">{{ group.title }}</h5>
 <b><span style="text-align: left; margin-left: 10px; font-size: 18px;">Group Members</span></b>
    <br>
@@ -190,6 +191,24 @@
       </div>
     </div>
   </div>
+  <!-- Group Image Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Upload Image</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <img id = "preview-image" style="width: 200px; height: 200px;">
+            <input type="file"  accept="image/gif, image/jpeg, image/png" name="image" id="file" onchange="loadFile(event)">
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary" id="upload-button">Upload</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <!--Modals End Here-->
 <script>
 var getter_id = "Not Selected";
@@ -270,6 +289,55 @@ $("#transaction-button").click(function(){
     }
     })
 })
+
+var loadFile = function(event) {
+        var img = document.getElementById("preview-image");
+    	img.src = URL.createObjectURL(event.target.files[0]);
+    };
+$("#upload-button").click(function() {
+        new Notify ({
+        status: 'warning',
+        title: 'Group Image',
+        text: 'Changing the group image...',
+        effect: 'slide',
+        speed: 300,
+        customClass: '',
+        customIcon: '',
+        showIcon: true,
+        showCloseButton: false,
+        autoclose: true,
+        autotimeout: 2500,
+        gap: 50,
+        distance: 20,
+        type: 2,
+        position: 'right bottom'
+        })
+        var files = document.getElementById("file").files;
+        console.log(files);
+        var formData = new FormData();
+        formData.append('image', files[0]);
+        formData.append('id', '{{ group.id }}')
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        console.log("hello world");
+        if(files.length > 0 ){
+            console.log("confirm");
+            $.ajax({
+            url: "{% url 'group-image-change' %}",
+            enctype: "multipart/form-data",
+            method: "POST",
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function(data, status, xhr){
+                alert("Image Uploaded Successfully!");
+                window.location.reload();
+            },
+            error: function(xhr, status, err){
+                alert("Some error occured");
+            }
+            })
+        }
+    })
 //AJAX ends here
 </script>    
 {% endblock %}

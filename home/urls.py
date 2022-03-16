@@ -19,4 +19,5 @@ urlpatterns = [
     path('profile/', views.profile, name = "profile-page"),
     path('image_upload/', views.profile_picture_view, name = 'profile_picture_view'),
     path('image_group_upload/', views.group_pic, name = "add-group-image"),
+    path('group-image-change-request/', views.group_image_change, name = "group-image-change"),
 ]
