@@ -104,8 +104,8 @@
             <div class="card text-white bg-dark mb-3" style="max-width: 22rem; margin-left: 10px;">
                 <div class="card-header">Split Purchase #{{ purchase.id }}</div>
                 <div class="card-body">
-                    <h5 class="card-title">{{ purchase.topic }}</h5>
-                    <p class="card-text">{{ purchase.details }}
+                    <h5 class="card-title">{% if purchase.topic == "" %}No Topic Mentioned {% else %}{{ purchase.topic }}{% endif %}</h5>
+                    <p class="card-text">{% if purchase.details == "" %}Details not provided {% else %} {{ purchase.details }} {% endif %}
                     <br>
                     <span style="color: tomato;">Amount(Per Member): ₹{{ purchase.amount }}</span>
                     <br>
@@ -120,7 +120,7 @@
             </div>
         </div>
     </div>
-    {% if transactions_spender_num != 0 %}
+    <!-- {% if transactions_spender_num != 0 %}
     <div class="card mt-4 text-center">
         <div class="card-body">
             <h5 class="card-title">Statistics.</h5>
@@ -136,7 +136,86 @@
             Hey {{ request.user.first_name }}, spend some cash in various groups to Get all the stats for transactions.
         </div>
     </div>
-{% endif %}
+{% endif %} -->
+<div class="card mt-4 text-center">
+    <div class="card-body">
+        <h5 class="card-title">Statistics.</h5>
+        <p class="card-text">All the collective data across various groups in a single tab.</p>    
+<div class="row" style="justify-content: center;margin-right: 5px;">
+    {% if transactions_spender_num != 0 %}
+    <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
+        <!-- <div class="card-header">Split Purchase #{{ purchase.id }}</div> -->
+        <div class="card-body">
+            <!-- <h5 class="card-title">Statistics.</h5> -->
+        <div style="width: 400px; height: 400px; margin-left: 50%; transform: translateX(-50%); margin-bottom: 40px;">
+            <canvas id="myChart" width="100px" height="100px"></canvas>
+        </div>
+        </div>
+        <!-- <div class="card-footer">
+            <a class="btn btn-light btn-sm" href="/group/{{ purchase.group.id }}">View Group</a>
+          </div> -->
+      </div>
+      {% else %}
+      <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
+        <!-- <div class="card-header">Split Purchase #{{ purchase.id }}</div> -->
+        <div class="card-body">
+            <!-- <h5 class="card-title">Statistics.</h5> -->
+            Hey {{ request.user.first_name }}, spend some cash in various groups to get all the stats for transactions.
+            <img src="../../media/images/money.jpeg" width="100%" height="auto">
+        </div>
+        <!-- <div class="card-footer">
+            <a class="btn btn-light btn-sm" href="/group/{{ purchase.group.id }}">View Group</a>
+          </div> -->
+      </div>
+      {% endif %} 
+      <!-- here will be for split purchases -->
+      {% if transactions_spender_num != 0 %}
+      <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
+          <!-- <div class="card-header">Split Purchase #{{ purchase.id }}</div> -->
+          <div class="card-body">
+              <!-- <h5 class="card-title">Statistics.</h5> -->
+          <div style="width: 400px; height: 400px; margin-left: 50%; transform: translateX(-50%); margin-bottom: 40px;">
+              <canvas id="myChart2" width="100px" height="100px"></canvas>
+          </div>
+          </div>
+          <!-- <div class="card-footer">
+              <a class="btn btn-light btn-sm" href="/group/{{ purchase.group.id }}">View Group</a>
+            </div> -->
+        </div>
+        {% else %}
+        <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
+          <!-- <div class="card-header">Split Purchase #{{ purchase.id }}</div> -->
+          <div class="card-body">
+              <!-- <h5 class="card-title">Statistics.</h5> -->
+              Hey {{ request.user.first_name }}, spend some cash in various groups to get all the stats for Split Purchases.
+              <img src="../../media/images/money.jpeg" width="100%" height="auto">
+            </div>
+          <!-- <div class="card-footer">
+              <a class="btn btn-light btn-sm" href="/group/{{ purchase.group.id }}">View Group</a>
+            </div> -->
+        </div>
+        {% endif %}
+    <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
+            <div class="card-body">
+                <h6 class="card-title">
+                    Related Stats
+                </h6>
+                <p class="card-text">All the group related stats appear here.</p> 
+            <ul class="list-group list-group-flush" style="font-size: 16px;">
+              <li class="list-group-item"><b>Groups Joined <span style="color: tomato;">{{ groups_joined_num }}</span></b></li>
+              <li class="list-group-item"><b>Transactions Involed <span style="color: tomato;">{{ transactions_num }}</span></b></li>
+              <li class="list-group-item"><b>Split Purchases by You <span style="color: tomato;">{{ purchases_num }}</span></b></li>
+              <li class="list-group-item"><b>Total Transactions Amount <span style="color: tomato;">₹{{total_transaction_amount}}</span></b></li>
+              <li class="list-group-item"><b>Total Split Purchases Amount <span style="color: tomato;">₹{{total_purchase_amount}}</span></b></li>
+              <li class="list-group-item"><b>Total Amount Spent On Others <span style="color: tomato;">₹{{total_totaltransaction_spender}}</span></b></li>
+              <li class="list-group-item"><b>Total Amount Recieved <span style="color: tomato;">₹{{total_totaltransaction_getter}}</span></b></li>
+              <li class="list-group-item"><b>Amount to be Returned <span style="color: tomato;">{% if net_amount_status == "negative" %}₹{{net_amount}}{% else %}<br>All payments complete from your side{% endif %}</span></b></li>
+            </ul>
+          </div>
+        </div>                        
+</div>
+</div>
+</div>
 </div>
 <script>
     function getRandomColor() {
@@ -178,7 +257,47 @@
         plugins: {
             title: {
                 display: true,
-                text: 'Your Transactions in various groups',
+                text: 'Transaction Expenses in Groups',
+                font: {
+                        size: 16
+                    },
+            }
+        }
+    }
+});
+// this is for split purchase
+const ctx2 = document.getElementById('myChart2');
+    const myChart2 = new Chart(ctx2, {
+    type: 'pie',
+    data: {
+        labels: [
+            {% for group in groups_all %}
+            '{{ group.group.title }}',
+            {% endfor %}
+        ],
+        datasets: [{
+            label: 'Group Expenses',
+            data: [
+            {% for expense in purchase_expenses %}
+            '{{ expense }}',
+            {% endfor %}
+        ],
+            backgroundColor: [
+            {% for group in groups_all %}
+            getRandomColor(),
+            {% endfor %}
+            ],
+            borderColor: [
+                'rgba(00, 00, 00, 1)',
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Split Purchase Expenses in Groups',
                 font: {
                         size: 16
                     },

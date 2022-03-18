@@ -15,12 +15,37 @@ def index(request):
         user = request.user
         groups_joined_num = GroupMember.objects.filter(user = user).count()
         transactions_getter_num = Transaction.objects.filter(getter = user).count()
-        transactions_spender_num = + Transaction.objects.filter(spender = user).count()
+        transactions_spender_num = Transaction.objects.filter(spender = user).count()
+        transactions_spender = Transaction.objects.filter(spender = user)
+        totaltransaction_spender = TotalTransaction.objects.filter(spender = user)
+        totaltransaction_getter = TotalTransaction.objects.filter(getter = user)
+        total_totaltransaction_spender = 0
+        total_totaltransaction_getter = 0
+        for x in totaltransaction_spender:
+            total_totaltransaction_spender += x.amount
+        for x in totaltransaction_getter:
+            total_totaltransaction_getter += x.amount 
+        net_amount_status = "positive"
+        net_amount = total_totaltransaction_spender - total_totaltransaction_getter
+        if net_amount > 0:
+            net_amount_status = "positive"
+        else:
+            net_amount_status = "negative"
+            net_amount = (-1) * net_amount           
+        purchases = Purchase.objects.filter(spender = user)
         purchases_num = Purchase.objects.filter(spender = user).count()
         groups_all = GroupMember.objects.filter(user = user)
         picture = prof_pic(request)
+        total_purchase_amount = 0
+        total_transaction_amount = 0
+        for transaction in transactions_spender:
+            total_transaction_amount += transaction.amount
+        for purchase in purchases:
+            group_members_num = GroupMember.objects.filter(group = purchase.group).count()
+            total_purchase_amount += (purchase.amount * group_members_num)
         transactions_num = transactions_getter_num + transactions_spender_num
         expenses = []
+        purchase_expenses = []
         for group in groups_all:
             user_money_spent = Transaction.objects.filter(spender = request.user, group = group.group)
             total_user_spent = 0.0
@@ -28,6 +53,12 @@ def index(request):
                 total_user_spent += x.amount
             expenses.append(total_user_spent)
             
+            purchase_user = Purchase.objects.filter(spender = request.user, group = group.group)
+            total_user_purchase_amount = 0.0
+            group_members_num = GroupMember.objects.filter(group = group.group).count()
+            for x in purchase_user:
+                total_user_purchase_amount += (x.amount * group_members_num)
+            purchase_expenses.append(total_user_purchase_amount)
 
         # purchases = Purchase.objects.filter(spender = user)
         # transactions_getter = Transaction.objects.filter(getter = user)
@@ -64,8 +95,15 @@ def index(request):
             'transactions_spender' : transactions_spender,
             'groups_all': groups_all,
             'expenses': expenses,
+            'purchase_expenses':purchase_expenses,
             'transactions_num': transactions_num,
             'picture': picture,
+            'total_transaction_amount': total_transaction_amount,
+            'total_purchase_amount': total_purchase_amount,
+            'total_totaltransaction_spender': total_totaltransaction_spender,
+            'total_totaltransaction_getter': total_totaltransaction_getter,
+            'net_amount': net_amount,
+            'net_amount_status': net_amount_status,
         }
         return render(request, "index.html", context)
     else:
@@ -374,7 +412,8 @@ def profile(request):
         for transaction in transactions_spender:
             total_transaction_amount += transaction.amount
         for purchase in purchases:
-            total_purchase_amount += purchase.amount
+            group_members_num = GroupMember.objects.filter(group = purchase.group).count()
+            total_purchase_amount += (purchase.amount * group_members_num)
         print(groups_created_num)         
         context = {
             'picture': picture,

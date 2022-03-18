@@ -88,12 +88,12 @@
         {% for purchase in purchases %}
         <div class="card" style="margin-top: 10px;">
             <div class="card-header">
-              Split Purchase #{{ forloop.counter }} (<b>{{ purchase.topic }}</b>)
+              Split Purchase #{{ forloop.counter }} (<b>{% if purchase.topic == "" %}No Topic Mentioned {% else %}{{ purchase.topic }}{% endif %}</b>)
             </div>
             <div class="card-body">
               <h6 class="card-title">{{ purchase.spender.first_name }} <span style="color: rgb(83, 158, 209);">@{{purchase.spender}}</span> Spent(Per Member) <b style="color: tomato;">₹{{ purchase.amount }}</b> on {{ purchase.datecreated }} </h6>
               <small>Details</small>
-              <p class="card-text">{{ purchase.details }}</p>
+              <p class="card-text">{% if purchase.details == "" %}Details not provided {% else %} {{ purchase.details }} {% endif %}</p>
             </div>
           </div>
         {% endfor %}  
