@@ -258,7 +258,6 @@ def group_details(request, groupid):
             'net_amount': net_amount,
             'picture': picture,
             }    
-        # print(net_amount)
         return render(request, "groupdetails.html", context)    
 
 

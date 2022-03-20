@@ -28,17 +28,6 @@
     border: 1px grey solid;
     border-radius: 10px;
 }
-/* .image{
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    margin-left: 50%;
-    transform: translateX(-50%);
-    background-image: url('{{ picture.picture.url }}');
-    background-size: auto;
-    background-position: center;
-    background-repeat: no-repeat;
-} */
 .add-image{
     right: 0px;
     bottom: 5px;
@@ -67,12 +56,9 @@
         <img src="{{ picture.picture.url }}" id = "image-frame" style="width: 150px; height: 150px; border-radius: 50%; margin-left: 50%; transform: translateX(-50%);">
         
         <div class = "add-image" id="add-image-text">
-            <!-- <label for="file" style="cursor: pointer;"> -->
                 <img src="https://cdn-icons-png.flaticon.com/512/182/182942.png" data-bs-toggle="modal" data-bs-target="#exampleModal" id = "edit-icon" style="width: 35px; height: 35px;">
-            <!-- </label> -->
         </div>
     </div>
-<!-- </form> -->
     <div style="text-align: center; margin-top: 10px;">
         <h4>{{ request.user.first_name }}</h4>
     </div>
@@ -111,8 +97,6 @@
           <h5 class="modal-title" id="exampleModalLabel">Upload Image</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <!-- <form method = "post" enctype="multipart/form-data"> -->
-            <!-- {% csrf_token %} -->
         <div class="modal-body">
             <img id = "preview-image" style="width: 200px; height: 200px;">
             <input type="file"  accept="image/gif, image/jpeg, image/png" name="image" id="file" onchange="loadFile(event)">
@@ -120,7 +104,6 @@
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary" id="upload-button">Upload</button>
         </div>
-    <!-- </form> -->
       </div>
     </div>
   </div>

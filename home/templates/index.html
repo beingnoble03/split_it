@@ -120,23 +120,6 @@
             </div>
         </div>
     </div>
-    <!-- {% if transactions_spender_num != 0 %}
-    <div class="card mt-4 text-center">
-        <div class="card-body">
-            <h5 class="card-title">Statistics.</h5>
-        <div style="width: 400px; height: 400px; margin-left: 50%; transform: translateX(-50%); margin-bottom: 40px;">
-            <canvas id="myChart" width="100px" height="100px"></canvas>
-        </div>
-        </div>
-    </div>
-    {% else %}
-    <div class="card mt-4 text-center">
-        <div class="card-body">
-            <h5 class="card-title">Statistics.</h5>
-            Hey {{ request.user.first_name }}, spend some cash in various groups to Get all the stats for transactions.
-        </div>
-    </div>
-{% endif %} -->
 <div class="card mt-4 text-center">
     <div class="card-body">
         <h5 class="card-title">Statistics.</h5>
@@ -144,55 +127,34 @@
 <div class="row" style="justify-content: center;margin-right: 5px;">
     {% if transactions_spender_num != 0 %}
     <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
-        <!-- <div class="card-header">Split Purchase #{{ purchase.id }}</div> -->
         <div class="card-body">
-            <!-- <h5 class="card-title">Statistics.</h5> -->
         <div style="width: 400px; height: 400px; margin-left: 50%; transform: translateX(-50%); margin-bottom: 40px;">
             <canvas id="myChart" width="100px" height="100px"></canvas>
         </div>
         </div>
-        <!-- <div class="card-footer">
-            <a class="btn btn-light btn-sm" href="/group/{{ purchase.group.id }}">View Group</a>
-          </div> -->
       </div>
       {% else %}
       <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
-        <!-- <div class="card-header">Split Purchase #{{ purchase.id }}</div> -->
         <div class="card-body">
-            <!-- <h5 class="card-title">Statistics.</h5> -->
             Hey {{ request.user.first_name }}, spend some cash in various groups to get all the stats for transactions.
             <img src="../../media/images/money.jpeg" width="100%" height="auto">
         </div>
-        <!-- <div class="card-footer">
-            <a class="btn btn-light btn-sm" href="/group/{{ purchase.group.id }}">View Group</a>
-          </div> -->
-      </div>
+        </div>
       {% endif %} 
-      <!-- here will be for split purchases -->
       {% if purchases_num != 0 %}
       <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
-          <!-- <div class="card-header">Split Purchase #{{ purchase.id }}</div> -->
           <div class="card-body">
-              <!-- <h5 class="card-title">Statistics.</h5> -->
           <div style="width: 400px; height: 400px; margin-left: 50%; transform: translateX(-50%); margin-bottom: 40px;">
               <canvas id="myChart2" width="100px" height="100px"></canvas>
           </div>
           </div>
-          <!-- <div class="card-footer">
-              <a class="btn btn-light btn-sm" href="/group/{{ purchase.group.id }}">View Group</a>
-            </div> -->
         </div>
         {% else %}
         <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
-          <!-- <div class="card-header">Split Purchase #{{ purchase.id }}</div> -->
           <div class="card-body">
-              <!-- <h5 class="card-title">Statistics.</h5> -->
               Hey {{ request.user.first_name }}, spend some cash in various groups to get all the stats for Split Purchases.
               <img src="../../media/images/money.jpeg" width="100%" height="auto">
             </div>
-          <!-- <div class="card-footer">
-              <a class="btn btn-light btn-sm" href="/group/{{ purchase.group.id }}">View Group</a>
-            </div> -->
         </div>
         {% endif %}
     <div class="card text-dark bg-white mb-3" style="max-width: 22rem; margin-left: 10px;">
