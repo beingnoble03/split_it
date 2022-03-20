@@ -1,5 +1,5 @@
 ## split_it
-IMG Winter Assignment Project made using Django. Split payments, add groups, add transactions, manage your profile.
+Expenses management app made using Django. Split payments, add groups, add transactions, manage your profile.
 
 ### How to access Split It?
 > Deployed on Heroku: [Split It | Heroku](https://noble-split-it.herokuapp.com/)
