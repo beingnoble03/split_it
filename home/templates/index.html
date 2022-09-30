@@ -17,7 +17,7 @@
 {% endblock %}
 {% block content %}
 <div class="main">
-    <h4>Hi {{ request.user.first_name }}!</h4>
+    <h4>Hi @{{ request.user.username }}!</h4>
     <b>
         <span style="color: tomato; font-size: 18px;">Welcome to Split It. You can manage all your group expenses, split purchases and create transactions, here.</span>
     </b>
