@@ -11,7 +11,7 @@ OR If you want to run it locally follow these steps:
  - Make sure you have python installed on your machine
  - Create a virtual environment using pipenv. To install pipenv run the following command `pip install pipenv`
  - Now initiat the virtual environment using `pipenv shell`
- - Once the virtual environment has been activated, install all the required packages given in the requirements.txt file by using the following command `pip install Django asgiref backports.zoneinfo certifi cloudinary dj-database-url gunicorn Pillow psycopg2-binary six sqlparse urllib3 whitenoise`
+ - Once the virtual environment has been activated, install all the required packages given in the requirements.txt file by using the following command `pip3 install -r requirements.txt`
  - After installing all the packages, run this command `python manage.py runserver`
  - Now, you can access Split It running at `http://localhost:8000/`
 
